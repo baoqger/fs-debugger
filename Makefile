@@ -1,4 +1,4 @@
-FSDB = fsdd 
+FSDB = fsdb 
 
 SRC = $(wildcard ./*.c)
 
@@ -9,7 +9,7 @@ CC = cc
 RM = rm 
 
 CFLAGS = -g
-LIBS = -lext2fs 
+LIBS = -lext2fs -lm 
 LDFLAGS = 
 
 .PHONY: clean 
