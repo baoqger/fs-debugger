@@ -63,9 +63,13 @@ void printSuperBlock (ext2_filsys fs) {
 	  blockSize(bsize), clusterSize(csize, bsize), gsize);
    printf("  feature incompat:%x\n", feat);
    printFeatureSets(feat);
-   printf("  mount time:%u . write time:%u . last check:%u\n",
-	  mtime, wtime, check);
-   
+   printf("Mount time: "); 
+   printFormatTime(mtime);
+   printf("Write time: "); 
+   printFormatTime(wtime);
+   printf("Last check time: "); 
+   printFormatTime(check);
+
 }
 
 // Block size is 2^(10 + s_log_block_size)
