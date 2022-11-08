@@ -40,7 +40,12 @@ int main (int argc, char **argv) {
    strcpy(fsname, argv[1]);
    errcode = ext2fs_open (fsname, EXT2_FLAG_RW, 0, 0, unix_io_manager, &fs);
    printf("Return: %d  FLAG:%d\n", (int)errcode, EXT2_FLAG_RW);
-   printSuperBlock(fs);
+   printSuperBlock(fs); 
+   // Read the first inode
+   ext2_ino_t ino = fs->super->s_first_ino;
+   struct ext2_inode inode;
+   errcode = ext2fs_read_inode(fs, ino, &inode);
+   printInodeInf(ino, &inode);
 }
 
 void printSuperBlock (ext2_filsys fs) {
@@ -57,17 +62,20 @@ void printSuperBlock (ext2_filsys fs) {
       csize = super->s_log_cluster_size,
       gsize = super->s_blocks_per_group;
    printf("Super block information:\n");
-   printf("  inodes:%u . blocks:%u . free inodes:%u . free blocks:%u\n",
-	  icnt, bcnt, ficnt, fbcnt);
-   printf("  block size:%u . cluster size:%u . no. blocks in group:%u\n",
-	  blockSize(bsize), clusterSize(csize, bsize), gsize);
-   printf("  feature incompat:%x\n", feat);
+   printf("\tInode Numbers: %u\n", icnt);
+   printf("\tBlock Numbers: %u\n", bcnt);
+   printf("\tFree Inode Numbers: %u\n", ficnt);
+   printf("\tFree Block Numbers: %u\n", fbcnt);
+   printf("\tBlock Size: %u\n", blockSize(bsize));
+   printf("\tCluster Size: %u\n", clusterSize(csize, bsize));
+   printf("\tBlocks in Group: %u\n", gsize);
+   printf("\tfeature incompat:%x\n", feat);
    printFeatureSets(feat);
-   printf("Mount time: "); 
+   printf("\tMount time: "); 
    printFormatTime(mtime);
-   printf("Write time: "); 
+   printf("\tWrite time: "); 
    printFormatTime(wtime);
-   printf("Last check time: "); 
+   printf("\tLast check time: "); 
    printFormatTime(check);
 
 }
@@ -85,11 +93,16 @@ unsigned int clusterSize(unsigned int cs, unsigned int bs) {
 
 // Print feature sets
 void printFeatureSets(unsigned int feat) {
-    printf("Features: ");
+    printf("\tFeatures: ");
     for (int i = 0; i < FEATURE_LEN; i++) {
         if (isKthBitSet(feat, i)) 
             printf("%s, ", featureSets[i]);
     }
     printf("\n");
+}
+
+
+void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
+    printf("Inode information for inode %u\n", ino);
 }
 
