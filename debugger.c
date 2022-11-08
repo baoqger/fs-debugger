@@ -42,7 +42,7 @@ int main (int argc, char **argv) {
    printf("Return: %d  FLAG:%d\n", (int)errcode, EXT2_FLAG_RW);
    printSuperBlock(fs); 
    // Read the first inode
-   ext2_ino_t ino = fs->super->s_first_ino;
+   ext2_ino_t ino = 493118; // fs->super->s_first_ino;
    struct ext2_inode inode;
    errcode = ext2fs_read_inode(fs, ino, &inode);
    printInodeInf(ino, &inode);
@@ -66,8 +66,8 @@ void printSuperBlock (ext2_filsys fs) {
    printf("\tBlock Numbers: %u\n", bcnt);
    printf("\tFree Inode Numbers: %u\n", ficnt);
    printf("\tFree Block Numbers: %u\n", fbcnt);
-   printf("\tBlock Size: %u\n", blockSize(bsize));
-   printf("\tCluster Size: %u\n", clusterSize(csize, bsize));
+   printf("\tBlock Size: %u bytes\n", blockSize(bsize));
+   printf("\tCluster Size: %u bytes\n", clusterSize(csize, bsize));
    printf("\tBlocks in Group: %u\n", gsize);
    printf("\tfeature incompat:%x\n", feat);
    printFeatureSets(feat);
@@ -104,5 +104,52 @@ void printFeatureSets(unsigned int feat) {
 
 void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
     printf("Inode information for inode %u\n", ino);
+    unsigned int i,j,dir;
+    unsigned char *ptr;
+    struct ext3_extents_header *eh;
+    struct ext3_extend_idx *idx;
+    struct ext3_extent *ex;
+
+    printf("\tHard Link Count: %u\n", inode->i_links_count); // number of hard links to this inode
+    printf("\tData Block Count: %u (4096 bytes per block)\n", inode->i_blocks / 8); 
+    printf("\tBlock Array Size: %u\n", EXT2_N_BLOCKS); // i_block[EXT2_N_BLOCKS] for Block map or extent tree
+    printf("\tFile Mode: %x\n", inode->i_mode);  // File mode
+
+    printf("\tA directory? ");    
+    if(LINUX_S_ISDIR(inode->i_mode)) printf("Yes\n"); else printf("No\n");
+
+    printf("\tOwner Uid: %u\n", inode->i_mode);
+    printf("\tFile Size: %u bytes\n", inode->i_size);
+    printf("\tFile Flag: 0x%x ", inode->i_flags);
+    if(inode->i_flags & 0x80000) printf("(Extents)\n"); else printf("\n");
+
+    if(inode->i_flags & 0x80000) printf("\tExtent Tree(Ext4):\n"); else printf("\tBlock Map(Ext2)\n");    
+   
+    for(int i = 0; i < 5; i++) {
+        printf("\t");
+        for(int j = 0; j < 3; j++) {
+            pphex(inode->i_block[3*i + j] & 0x000000FF);
+            pphex((inode->i_block[3*i + j] & 0x0000FF00) >> 8);
+            pphex((inode->i_block[3*i + j] & 0x00FF0000) >> 16);
+            pphex((inode->i_block[3*i + j] & 0xFF000000) >> 24);
+        }
+        printf("\n");
+    }
+    
+    }
+
+void pphex(unsigned char ch) {
+    char space[3];
+    space[0] = '0';
+    space[1] = '0';
+    space[2] = 0; // same as space[2] = '\0' to terminate the string
+
+    if((ch % 16) < 10)  space[1] = (char)((ch%16)+'0');  
+    if((ch % 16) >= 10) space[1] = (char)(((ch%16)-10)+'A');
+    if(((ch >> 4) % 16) < 10)  space[0] = (char)(((ch >> 4) % 16)+'0');
+    if(((ch >> 4) % 16) >= 10) space[0] = (char)(((ch >> 4) % 16)-10+'A');
+    printf("%s ", space);
+    
 }
+
 
