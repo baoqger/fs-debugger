@@ -153,6 +153,18 @@ void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
         if (!node_depth) printf("Yes\n"); else printf("No\n");
         printf("\t\tType of Following Entries: ");
         if (!node_depth) printf("Extent(point to the file's data block)\n"); else printf("Index(point to a block contains more interior nodes in the extent tree)\n");
+        // print the data block extent layout
+        if (!node_depth) {
+            printf("\t\tExtent Layout: \n");
+            for (int i = 0; i < entries_number; i++) {
+                unsigned int extent_length = lowHalf(inode->i_block[3*i + 1]);
+                unsigned long block_start_low_32 = inode->i_block[3*i + 2];
+                unsigned long block_start_high_16 = highHalf(inode->i_block[3*i + 1]);
+                unsigned long block_start = (unsigned long)((block_start_high_16 << 32) + block_start_low_32);
+                unsigned long block_end = (unsigned long)(block_start + extent_length);
+                printf("\t\t\tExtent %d: %lu - %lu\n", i, block_start, block_end);
+            }
+        }
     }
 }
 
