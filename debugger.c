@@ -42,7 +42,7 @@ int main (int argc, char **argv) {
    printf("Return: %d  FLAG:%d\n", (int)errcode, EXT2_FLAG_RW);
    printSuperBlock(fs); 
    // Read the first inode
-   ext2_ino_t ino = 493118; // fs->super->s_first_ino;
+   ext2_ino_t ino = 125754; // 493118; // fs->super->s_first_ino;
    struct ext2_inode inode;
    errcode = ext2fs_read_inode(fs, ino, &inode);
    printInodeInf(ino, &inode);
@@ -123,8 +123,10 @@ void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
     printf("\tFile Flag: 0x%x ", inode->i_flags);
     if(inode->i_flags & 0x80000) printf("(Extents)\n"); else printf("\n");
 
+    printf("\n");
+    // print i_block layout. It's block map for Ext2/3 and extent tree for Ext4.
     if(inode->i_flags & 0x80000) printf("\tExtent Tree(Ext4):\n"); else printf("\tBlock Map(Ext2)\n");    
-   
+    // the length of i_block array is 15.
     for(int i = 0; i < 5; i++) {
         printf("\t");
         for(int j = 0; j < 3; j++) {
@@ -136,7 +138,23 @@ void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
         printf("\n");
     }
     
+    // print interpreted data of above i_block layout as extent tree
+    if (inode->i_flags & 0x80000) {
+        printf("\n");
+        printf("\tExtent Header Content:\n");
+        printf("\t\tMagic Number: 0x%04X\n", lowHalf(inode->i_block[0]));
+        unsigned int entries_number = highHalf(inode->i_block[0]);
+        printf("\t\tNumber of Following Entries: %u(0x%04X)\n", entries_number, entries_number);
+        unsigned int max_entries_number = lowHalf(inode->i_block[1]);
+        printf("\t\tMax Number of Following Entries: %u(0x%04X)\n", max_entries_number, max_entries_number);
+        unsigned int node_depth = highHalf(inode->i_block[1]);
+        printf("\t\tCurrent Node Depth in Extent Tree: %u(0x%04X)\n", node_depth, node_depth);
+        printf("\t\tA Leaf Node? ");
+        if (!node_depth) printf("Yes\n"); else printf("No\n");
+        printf("\t\tType of Following Entries: ");
+        if (!node_depth) printf("Extent(point to the file's data block)\n"); else printf("Index(point to a block contains more interior nodes in the extent tree)\n");
     }
+}
 
 void pphex(unsigned char ch) {
     char space[3];

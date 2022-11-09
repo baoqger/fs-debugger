@@ -15,3 +15,17 @@ void printFormatTime(unsigned int t) {
     strftime(buf, BUF_LEN, "%c", ptm); // %c: National representation of data and time
     printf("%s\n", buf);
 }
+
+/*
+ * return two high bytes of one word(32bits)
+ * */
+unsigned int highHalf(unsigned int i) {
+    return (i & 0xFFFF0000) >> 16;
+}
+
+/*
+ * return two low bytes of one word(32bits)
+ * */
+unsigned int lowHalf(unsigned int i) {
+    return i & 0x0000FFFF;
+}
