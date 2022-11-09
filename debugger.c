@@ -156,13 +156,15 @@ void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
         // print the data block extent layout
         if (!node_depth) {
             printf("\t\tExtent Layout: \n");
-            for (int i = 0; i < entries_number; i++) {
+            for (int i = 1; i <= entries_number; i++) {
                 unsigned int extent_length = lowHalf(inode->i_block[3*i + 1]);
-                unsigned long block_start_low_32 = inode->i_block[3*i + 2];
+                unsigned int block_start_low_32 = inode->i_block[3*i + 2];
                 unsigned long block_start_high_16 = highHalf(inode->i_block[3*i + 1]);
                 unsigned long block_start = (unsigned long)((block_start_high_16 << 32) + block_start_low_32);
                 unsigned long block_end = (unsigned long)(block_start + extent_length);
                 printf("\t\t\tExtent %d: %lu - %lu\n", i, block_start, block_end);
+                printf("\t\t\t\tStart Block Number: %lu(0x%08lX)\n", block_start, block_start);
+                printf("\t\t\t\tExtent Length: %u(0x%04X)\n", extent_length, extent_length);
             }
         }
     }
