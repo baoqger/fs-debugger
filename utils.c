@@ -2,6 +2,19 @@
 #include <ext2fs/ext2fs.h>
 #include "utils.h"
 
+char featureSets[FEATURE_LEN][30] = {
+    "Directory Preallocation",  //0x1
+    "Image inodes",             //0x2
+    "Journal",                  //0x4
+    "Extended",                 //0x8
+    "Reserved GDT",             //0x10
+    "Indexed Directories",      //0x20
+    "Lazy BG",                  //0x40
+    "Exclude inode",            //0x80
+    "Exclude bitmap",           //0x100
+    "Sparse Super Block"        //0x200
+};
+
 bool isKthBitSet(int n, int k) {
     if (n & (1 << k)) 
         return 1;
@@ -53,7 +66,7 @@ void printFileType(unsigned int mode) {
             printf("Block device.\n");
             break;
         case LINUX_S_IFIFO:
-            printf("FIFO.\n");
+            printf("Named pipe.\n");
             break;
         case LINUX_S_IFSOCK:
             printf("Socket.\n");
@@ -63,4 +76,14 @@ void printFileType(unsigned int mode) {
             break;
 
     }
+}
+
+// Print feature sets
+void printFeatureSets(unsigned int feat) {
+    printf("\tFeatures: ");
+    for (int i = 0; i < FEATURE_LEN; i++) {
+        if (isKthBitSet(feat, i)) 
+            printf("%s, ", featureSets[i]);
+    }
+    printf("\n");
 }
