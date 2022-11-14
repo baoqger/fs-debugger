@@ -1,7 +1,13 @@
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include "command.h"
+#include "openfs.h"
+#include "superblock.h"
+#include "inode.h"
+
+ext2_filsys fs = NULL;
 
 COMMAND commands[] = {
     {"open", com_open, "Open file system"},
@@ -165,7 +171,8 @@ int com_help (char *arg) {
     int printed = 0;
     for (i = 0; commands[i].name; i++) {
         if(!*arg || strcmp(arg, commands[i].name) == 0) {
-            printf("%s\t\t%s.\n", commands[i].name, commands[i].doc);
+            // left align with min width of 10
+            printf("%-10s\t\t%s.\n", commands[i].name, commands[i].doc);
             printed++;
         } 
     }
@@ -193,17 +200,36 @@ int com_quit(char* arg) {
 }
 
 int com_open(char* arg) {
+    if (!valid_argument("open", arg)) 
+        return 1;
+    openfs(arg);
     return 0;
 }
 
 int com_superblock(char* arg) {
+    printSuperBlock(fs);
     return 0;
 }
 
 int com_inode(char* arg) {
+    if (!valid_argument("inode", arg)) 
+        return 1;
+    ext2_ino_t ino = strtoul(arg, NULL, 10);    
+    struct ext2_inode inode;
+    printInodeInf(ino, &inode);   
     return 0;
 }
 
 int com_block(char* arg) {
     return 0;
+}
+
+// Return non-zero if ARG is a valid argument for CALLER, else print
+// an error message and return zero
+int valid_argument(char *caller, char* arg) {
+    if (!arg || !*arg) {
+        fprintf(stderr, "%s: Argument required.\n", caller);
+        return 0;
+    }
+    return 1;
 }
