@@ -9,7 +9,7 @@ CC = cc
 RM = rm 
 
 CFLAGS = -g
-LIBS = -lext2fs -lm 
+LIBS = -lext2fs -lm -lreadline
 LDFLAGS = 
 
 .PHONY: clean 
