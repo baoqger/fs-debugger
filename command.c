@@ -216,7 +216,7 @@ int com_inode(char* arg) {
         return 1;
     ext2_ino_t ino = strtoul(arg, NULL, 10);    
     struct ext2_inode inode;
-    printInodeInf(ino, &inode);   
+    printInodeInf(fs, ino, &inode);   
     return 0;
 }
 

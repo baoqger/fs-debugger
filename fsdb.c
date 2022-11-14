@@ -43,24 +43,6 @@ int main (int argc, char **argv) {
 
     exit(0);
 
-   // ext2_filsys fs = NULL; 
-   // errcode_t errcode;
-   // char fsname[100] = "/dev/sda5";
-
-   // if (argc < 2) {
-   //    printf("Usage: %s /dev/...\n",argv[0]);
-   //    exit(0);
-   // }
-
-   // strcpy(fsname, argv[1]);
-   // errcode = ext2fs_open (fsname, EXT2_FLAG_RW, 0, 0, unix_io_manager, &fs);
-   // printf("Return: %d  FLAG:%d\n", (int)errcode, EXT2_FLAG_RW);
-   // printSuperBlock(fs); 
-   // // Read the first inode
-   // ext2_ino_t ino = 125754; // 493118; // fs->super->s_first_ino;
-   // struct ext2_inode inode;
-   // errcode = ext2fs_read_inode(fs, ino, &inode);
-   // printInodeInf(ino, &inode);
 }
 
 

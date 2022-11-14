@@ -2,7 +2,7 @@
 #include "inode.h"
 #include "utils.h"
 
-void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
+void printInodeInf(ext2_filsys fs, ext2_ino_t ino, struct ext2_inode  *inode) {
     printf("Inode information for inode %u\n", ino);
     unsigned int i,j,dir;
     unsigned char *ptr;
@@ -10,11 +10,17 @@ void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
     struct ext3_extend_idx *idx;
     struct ext3_extent *ex;
 
+    errcode_t errcode;
+    if ((errcode = ext2fs_read_inode(fs, ino, inode)) != 0) {
+        fprintf(stderr, "Failed to dump inode structure of %u", ino);
+        exit(1);
+    }
+
     printf("\tHard Link Count: %u\n", inode->i_links_count); // number of hard links to this inode
     printf("\tData Block Count: %u (4096 bytes per block)\n", inode->i_blocks / 8); 
     printf("\tBlock Array Size: %u\n", EXT2_N_BLOCKS); // i_block[EXT2_N_BLOCKS] for Block map or extent tree
     printFileType(inode->i_mode);
-    printf("\tOwner Uid: %u\n", inode->i_mode);
+    printf("\tOwner Uid: %u\n", inode->i_uid);
     printf("\tFile Size: %u bytes\n", inode->i_size);
     printf("\tFile Flag: 0x%x ", inode->i_flags);
     if(inode->i_flags & 0x80000) printf("(Extents)\n"); else printf("\n");
