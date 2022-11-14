@@ -113,11 +113,7 @@ void printInodeInf(ext2_ino_t ino, struct ext2_inode  *inode) {
     printf("\tHard Link Count: %u\n", inode->i_links_count); // number of hard links to this inode
     printf("\tData Block Count: %u (4096 bytes per block)\n", inode->i_blocks / 8); 
     printf("\tBlock Array Size: %u\n", EXT2_N_BLOCKS); // i_block[EXT2_N_BLOCKS] for Block map or extent tree
-    printf("\tFile Mode: %x\n", inode->i_mode);  // File mode
-
-    printf("\tA directory? ");    
-    if(LINUX_S_ISDIR(inode->i_mode)) printf("Yes\n"); else printf("No\n");
-
+    printFileType(inode->i_mode);
     printf("\tOwner Uid: %u\n", inode->i_mode);
     printf("\tFile Size: %u bytes\n", inode->i_size);
     printf("\tFile Flag: 0x%x ", inode->i_flags);

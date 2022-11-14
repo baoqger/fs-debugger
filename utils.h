@@ -8,6 +8,7 @@
 
 bool isKthBitSet(int n, int k);
 void printFormatTime(unsigned int);
+void printFileType(unsigned int);
 unsigned int highHalf(unsigned int);
 unsigned int lowHalf(unsigned int);
 #endif 

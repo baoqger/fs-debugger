@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ext2fs/ext2fs.h>
 #include "utils.h"
 
 bool isKthBitSet(int n, int k) {
@@ -28,4 +29,38 @@ unsigned int highHalf(unsigned int i) {
  * */
 unsigned int lowHalf(unsigned int i) {
     return i & 0x0000FFFF;
+}
+
+/*
+ * print the file type
+ * */
+void printFileType(unsigned int mode) {
+    printf("\tFile Type: ");
+    switch(mode & LINUX_S_IFMT) {
+        case LINUX_S_IFLNK:
+            printf("Symbolic link.\n");
+            break;
+        case LINUX_S_IFREG:
+            printf("Regular file.\n");
+            break;
+        case LINUX_S_IFDIR:
+            printf("Directory.\n");
+            break;
+        case LINUX_S_IFCHR:
+            printf("Character device.\n");
+            break;
+        case LINUX_S_IFBLK:
+            printf("Block device.\n");
+            break;
+        case LINUX_S_IFIFO:
+            printf("FIFO.\n");
+            break;
+        case LINUX_S_IFSOCK:
+            printf("Socket.\n");
+            break;
+        default:
+            printf("Unknown.\n");
+            break;
+
+    }
 }
