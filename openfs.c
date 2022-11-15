@@ -8,6 +8,6 @@ int openfs(char *fsname) {
         fprintf(stderr, "Failed to open file syetem: %s\n", fsname);       
         return 1;
     }
-    printf("File system %s is open\n", fsname);
+    printf("File system %s is opened.\n", fsname);
     return 0;
 }

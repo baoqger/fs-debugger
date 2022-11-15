@@ -6,6 +6,7 @@
 #include "openfs.h"
 #include "superblock.h"
 #include "inode.h"
+#include "block.h"
 
 ext2_filsys fs = NULL;
 
@@ -45,7 +46,7 @@ int execute_line(char *line) {
     command = find_command(word);
 
     if (!command) {
-        fprintf(stderr, "%s: No such command for Fileman.\n", word);
+        fprintf(stderr, "%s: No such command for fsdb.\n", word);
         return -1;
     }
 
@@ -221,6 +222,10 @@ int com_inode(char* arg) {
 }
 
 int com_block(char* arg) {
+    if (!valid_argument("block", arg))
+        return 1;
+    blk_t blk = strtoul(arg, NULL, 10);
+    printBlock(fs, blk);
     return 0;
 }
 
