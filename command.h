@@ -13,7 +13,7 @@ typedef struct {
 } COMMAND;
 
 /* The names of functions that actually do the manipulation. */
-int com_open(), com_superblock(), com_inode(), com_block(), com_help(), com_quit();
+int com_open(), com_superblock(), com_inode(), com_block(), com_help(), com_quit(), com_dir();
 char* stripwhite(char*);
 COMMAND* find_command(char*);
 void initialize_readline();

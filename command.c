@@ -15,6 +15,7 @@ COMMAND commands[] = {
     {"superblock", com_superblock, "Display the content of superblock."},
     {"inode", com_inode, "Dump the inode inforamtion."},
     {"block", com_block, "Dump the data block."},
+    {"dir", com_dir, "Dump the entries of directory data block."},
     {"help", com_help, "Display the help of fsdb."},
     {"?", com_help, "Synonym for 'help'."},
     {"quit", com_quit, "Quit using fsdb."},
@@ -226,6 +227,14 @@ int com_block(char* arg) {
         return 1;
     blk_t blk = strtoul(arg, NULL, 10);
     printBlock(fs, blk);
+    return 0;
+}
+
+int com_dir(char* arg) {
+    if (!valid_argument("dir", arg))
+        return 1;
+    blk_t blk = strtoul(arg, NULL, 10);
+    dirBlock(fs, blk);
     return 0;
 }
 
